@@ -15,6 +15,7 @@ module control_game(
     MOVE     = 6,
     DARW_WIN_SCREEN 	  = 7,
     WAIT_FOR_START   = 8,
+SET_RESET_SIGNAL = 9
     
     // Next state logic aka our state table
     always@(*)
