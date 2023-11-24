@@ -52,7 +52,7 @@ module ps2_call (
 	 *                              Internal Modules                             *
 	 *****************************************************************************/
 
-	PS2_Controller PS2 (
+	ps2_controller PS2 (
 		// Inputs
 		.CLOCK_50				(CLOCK_50),
 		.reset				   (!Resetn),
@@ -80,15 +80,14 @@ module inputs(CLOCK_50, signalStraight, signalLeft, signalRight, ps2_key_pressed
  
 	
 	localparam  E0 = 4'd0, //make
-				F0 = 4'd1, //break
-				WAIT = 4'd2,
-				LEFT = 4'd3,
-				RIGHT = 4'd4,
-				STRAIGHT = 4'd5,
+				WAIT = 4'd1,
+				LEFT = 4'd2,
+				RIGHT = 4'd3,
+				STRAIGHT = 4'd4,
     
     // Next state logic aka our state table
     always@(*)
-    begin: state_table 
+    begin
 		case (current_state)
 			WAIT: begin
                 if ((ps2_key_data == 8'h2D || ps2_key_data == 8'h4B || ps2_key_data == 8'h1B) && ps2_key_pressed) next_state = E0;
@@ -124,7 +123,7 @@ module inputs(CLOCK_50, signalStraight, signalLeft, signalRight, ps2_key_pressed
 	end
 		
 	always@(posedge CLOCK_50)
-    begin: state_FFs
+    begin
         if(!Resetn)
            current_state <= WAIT;
         else
