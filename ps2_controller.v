@@ -87,7 +87,8 @@ module PS2Controller(
 
     // Assign the output
     assign KEYPRESS_S       = (DAT_INT_PREVIOUS == 8'h1B);
-    assign KEYPRESS_W       = (DAT_INT_PREVIOUS == 8'h1D);
+    assign KEYPRESS_R       = (DAT_INT_PREVIOUS == 8'h2D);
+    assign KEYPRESS_L       = (DAT_INT_PREVIOUS == 8'h4B);
     assign KEYPRESS_ESC     = (DAT_INT_PREVIOUS == 8'h76);
     
     always @ (posedge CLK_INT)
