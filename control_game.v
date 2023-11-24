@@ -1,8 +1,16 @@
 module control_game(
 	input Clock, enable, start, left, right, choice_for_path, win, forward, done1, done2, done1_new, done2_new, start_graphics, done3, 
-	output reg reset_signals, start_race, initial_draw_car, initial_draw_car, draw_car, draw_start_screen, draw_win_screen, move_car, plot);
-
-	output reg set_reset_signals, start_race, draw_background, draw_car, draw_over_car, draw_explosion, draw_start_screen, draw_win_screen, move, plot);
+	
+	output reg
+		draw_graphics,
+		set_reset_signals,
+		draw_background,
+		draw_car,
+	   draw_new_background,
+		draw_new_car,
+		draw_win_screen,
+		move,
+		plot);
 	
 	reg[3:0] current_state, next_state;
 
@@ -12,22 +20,22 @@ module control_game(
 					DRAW_BACKGROUND   = 2,
 					DRAW_CAR          = 3,
 					WAIT     = 4,
-					DARW_NEW_BACKGROUND = 5,
+					DRAW_NEW_BACKGROUND = 5,
 					DRAW_NEW_CAR     = 6,
 					MOVE_FORWARD 	  = 7,
-					SWITCH_PASS   = 8,
-					DRAW_WIN_SCREEN	  = 9;
+					LEFT_RIGHT_PATH   = 8,
+					DRAW_WIN_SCREEN	  = 9,
 					WAIT_FOR_START = 10;
     
     // Next state logic aka our state table
     always@(*)
-    begin: state_table 
+    begin 
 		case (current_state)
 			DRAW_GRAPHICS: begin
-				if(begin_game)begin
+				if(start)begin
 					if(start_graphics) next_state = DRAW_BACKGROUND;
 					else if(start) next_state = SET_RESET;
-					else next_state = DRAW_START_SCREEN;
+					else next_state = DRAW_BACKGROUND;
 				end
 			end
 			SET_RESET: next_state = DRAW_GRAPHICS;
@@ -55,7 +63,7 @@ module control_game(
 					else if(start) next_state = SET_RESET;
 					else next_state = DRAW_CAR;
 				end
-				else next_state = DRAW_OVER_CAR;
+				else next_state = DRAW_NEW_CAR;
 			end
 			DRAW_NEW_CAR: begin
 				if(done2_new) begin
@@ -64,7 +72,7 @@ module control_game(
 					else if(start) next_state = SET_RESET;
 					else next_state = DRAW_CAR;
 				end
-				else next_state = DRAW_OVER_CAR;
+				else next_state = DRAW_NEW_CAR;
 			end
 			MOVE_FORWARD: next_state = DRAW_CAR;
 			LEFT_RIGHT_PATH: next_state = DRAW_CAR;
@@ -76,18 +84,18 @@ module control_game(
 				else next_state = DRAW_WIN_SCREEN;
 			end
 			WAIT_FOR_START: next_state = start ? DRAW_BACKGROUND : WAIT_FOR_START;
-			default: next_state = SET_RESET_SIGNALS;
+			default: next_state = SET_RESET;
 		endcase
     end // state_table
 
     // Output logic aka all of our datapath control signals
     always @(*)
-    begin: enable_signals
-	 
+    begin
+		draw_graphics = 1'b0;
 		set_reset_signals = 1'b0;
 		draw_background = 1'b0;
 		draw_car = 1'b0;
-	        draw_new_background = 1'b0;
+	   draw_new_background = 1'b0;
 		draw_new_car = 1'b0;
 		draw_win_screen = 1'b0;
 		move = 1'b0;
@@ -141,11 +149,9 @@ module control_game(
    
     // current_state registers
     always@(posedge Clock)
-    begin: 
-	    if(!start)
-           current_state <= SET_RESET_SIGNALS;
-        else
-            current_state <= next_state;
+    begin
+	    if(!start) current_state <= SET_RESET;
+       else current_state <= next_state;
     end // state_FFS
 	 
 endmodule
