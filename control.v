@@ -1,7 +1,7 @@
 module control(
 	input Clock, Resetn, Enable1Frame, start, forward, right, left,
 	input DoneDrawBackground, DoneDrawCar, DoneDrawOverCar, DoneFixCar, DoneDrawStartScreen, DoneDrawWinScreen, FinishedRace, HitWall,
-	output reg set_reset_signals, start_race, draw_background, draw_car, draw_over_car, darw_fix_car, draw_start_screen, draw_win_screen, move, plot);
+	output reg set_reset_signals, start_race, draw_background, draw_car, draw_over_car, draw_fix_car, draw_start_screen, draw_win_screen, move, plot);
 	
 	reg[3:0] current_state, next_state;
 
