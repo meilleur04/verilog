@@ -7,7 +7,7 @@ module projectTop(
 	output reg plotOut);
 	
 	wire set_reset_signals, start_race, draw_background, draw_car, draw_over_car, move, draw_fix_car, draw_win_screen, draw_start_screen;
-	wire DoneDrawCar, DoneDrawBackground, DoneDrawOverCar, FinishedRace, HitWall, DoneFixPath, DoneDrawWinScreen, DoneDrawStartScreen;
+	wire DoneDrawCar, DoneDrawBackground, DoneDrawOverCar, FinishedRace, HitWall, DoneFixCar, DoneDrawWinScreen, DoneDrawStartScreen;
 	
 	wire[19:0] OneFrameCounter;
 	wire Enable1Frame;
@@ -36,7 +36,7 @@ module projectTop(
 		.DoneDrawOverCar(DoneDrawOverCar),
 		.FinishedRace(FinishedRace),
 		.HitWall(HitWall),
-		.DoneFixPath(DoneFixPath),
+		.DoneFixCar(DoneFixCar),
 		.set_reset_signals(set_reset_signals),
 		.start_race(start_race),
 		.draw_background(draw_background),
