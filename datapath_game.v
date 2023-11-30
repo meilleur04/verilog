@@ -1,7 +1,7 @@
 module datapath(
 	input Clock, Resetn, moveForward, moveRight, moveLeft,
-	input set_reset_signals, start_race, draw_background, draw_car, draw_over_car, move, darw_fix_car, draw_start_screen, draw_win_screen,
-	output reg DoneDrawBackground, DoneDrawCar, DoneDrawOverCar, FinishedRace, HitWall, DonwFixCar, DoneDrawStartScreen, DoneDrawWinScreen,
+	input set_reset_signals, start_race, draw_background, draw_car, draw_over_car, move, draw_fix_car, draw_start_screen, draw_win_screen,
+	output reg DoneDrawBackground, DoneDrawCar, DoneDrawOverCar, FinishedRace, HitWall, DoneFixCar, DoneDrawStartScreen, DoneDrawWinScreen,
 	output reg[5:0] colourOut,
 	output reg[7:0] yOut,
 	output reg[8:0] xOut);
@@ -205,7 +205,7 @@ module datapath(
 		
 		//---------------------------------------Drawing Car---------------------------------------
 		
-		else if(draw_car && !DoneDrawCar)||(draw_fix_car && !DoneFixCar)begin
+		else if((draw_car && !DoneDrawCar)||(draw_fix_car && !DoneFixCar))begin
 
 			if(carColourToDisplay == 6'b100010) begin
 				colourOut <= backgroundColourToDisplay;
