@@ -1,7 +1,7 @@
 module datapath(
 	input Clock, Resetn, moveForward, moveRight, moveLeft,
-	input set_reset_signals, start_race, draw_background, draw_car, draw_over_car, move, draw_explosion, draw_start_screen, draw_win_screen,
-	output reg DoneDrawBackground, DoneDrawCar, DoneDrawOverCar, FinishedRace, HitWall, DoneDrawExplosion, DoneDrawStartScreen, DoneDrawWinScreen,
+	input set_reset_signals, start_race, draw_background, draw_car, draw_over_car, move, draw_start_screen, draw_win_screen,
+	output reg DoneDrawBackground, DoneDrawCar, DoneDrawOverCar, FinishedRace, HitWall, DoneDrawStartScreen, DoneDrawWinScreen,
 	output reg[5:0] colourOut,
 	output reg[7:0] yOut,
 	output reg[8:0] xOut);
@@ -54,13 +54,6 @@ module datapath(
 		.data(6'b000000),
 		.wren(1'b0), 
 		.q(backgroundColourToDisplay));
-		
-	boomRam boom(
-		.address(boomAddress), 
-		.clock(Clock),
-		.data(6'b000000),
-		.wren(1'b0), 
-		.q(boomColourToDisplay));
 
 	winScreenRam win(
 		.address(winScreenAddress), 
@@ -103,7 +96,6 @@ module datapath(
 			yCount <= 8'd0;
 			DoneDrawBackground <= 1'b0;
 			DoneDrawCar <= 1'b0;
-			DoneDrawExplosion <= 1'b0;
 			DoneDrawOverCar <= 1'b0;
 			HitWall <= 1'b0;
 			currentOrientation <= orientRight;
@@ -255,73 +247,6 @@ module datapath(
 				xCount <= 9'd0; 
 				yCount <= 8'd0;
 
-			end
-		end
-		
-		//---------------------------------------Drawing Explosion---------------------------------------
-		
-		if(draw_explosion && !DoneDrawExplosion) begin
-			
-			if(boomColourToDisplay == 6'b100000) begin //the number here is for white colour from the image we're using
-				colourOut <= backgroundColourToDisplay;
-				xOut <= currentXPosition + xCount;
-				yOut <= currentYPosition + yCount;
-			end
-			
-			else begin
-			//otherwise drawing the orange-yellow flame
-				colourOut <= boomColourToDisplay; 
-				xOut <= currentXPosition + xCount;
-				yOut <= currentYPosition + yCount;
-			end
-			
-			if(xCount == 9'd31 && yCount == 8'd31) begin
-				xCount <= 9'd0;
-				yCount <= 8'd0;
-				backgroundAddress <= backgroundAddress + (-(320 * 31) - 31);
-				DoneDrawExplosion <= 1'b1;
-				FinishedRace <= 1'b1;
-			end
-			
-			else if(xCount == 9'd31) begin
-				xCount <= 9'd0;
-				yCount <= yCount + 8'd1;
-				boomAddress <= boomAddress + 10'd1;
-				// Moves on the next line of addresses for the background
-				backgroundAddress <= backgroundAddress + (320 - 31);
-				DoneDrawExplosion <= 1'b0;
-			end
-			
-			else begin
-				xCount <= xCount + 9'd1;
-				boomAddress <= boomAddress + 10'd1;
-				backgroundAddress <= backgroundAddress + 17'd1;
-				DoneDrawExplosion <= 1'b0;
-			end
-		end
-		
-		if(draw_over_car && !DoneDrawOverCar) begin
-		
-			colourOut <= backgroundColourToDisplay; //colour of sprite at current position
-			xOut <= currentXPosition + xCount;
-			yOut <= currentYPosition + yCount;
-			
-			if(xCount == 9'd31 && yCount == 8'd31) begin
-				xCount <= 9'd0;
-				yCount <= 8'd0;
-				backgroundAddress <= backgroundAddress + (-(320 * 31) - 31);
-				DoneDrawOverCar <= 1'b1;
-			end
-			else if(xCount == 9'd31) begin
-				xCount <= 9'd0;
-				yCount <= yCount + 8'd1;
-				backgroundAddress <= backgroundAddress + (320 - 31);
-				DoneDrawOverCar <= 1'b0;
-			end
-			else begin
-				xCount <= xCount + 9'd1;
-				backgroundAddress <= backgroundAddress + 17'd1;
-				DoneDrawOverCar <= 1'b0;
 			end
 		end
 		
