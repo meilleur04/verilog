@@ -1,7 +1,7 @@
 module datapath(
 	input Clock, Resetn, moveForward, moveRight, moveLeft,
-	input set_reset_signals, start_race, draw_background, draw_car, draw_over_car, move, draw_start_screen, draw_win_screen,
-	output reg DoneDrawBackground, DoneDrawCar, DoneDrawOverCar, FinishedRace, HitWall, DoneDrawStartScreen, DoneDrawWinScreen,
+	input set_reset_signals, start_race, draw_background, draw_car, draw_over_car, move, darw_fix_car, draw_start_screen, draw_win_screen,
+	output reg DoneDrawBackground, DoneDrawCar, DoneDrawOverCar, FinishedRace, HitWall, DonwFixCar, DoneDrawStartScreen, DoneDrawWinScreen,
 	output reg[5:0] colourOut,
 	output reg[7:0] yOut,
 	output reg[8:0] xOut);
@@ -97,6 +97,7 @@ module datapath(
 			DoneDrawBackground <= 1'b0;
 			DoneDrawCar <= 1'b0;
 			DoneDrawOverCar <= 1'b0;
+			DoneFixCar <= 1'b0;
 			HitWall <= 1'b0;
 			currentOrientation <= orientRight;
 			FinishedRace <= 1'b1;
@@ -204,7 +205,7 @@ module datapath(
 		
 		//---------------------------------------Drawing Car---------------------------------------
 		
-		else if(draw_car && !DoneDrawCar) begin
+		else if(draw_car && !DoneDrawCar)||(draw_fix_car && !DoneFixCar)begin
 
 			if(carColourToDisplay == 6'b100010) begin
 				colourOut <= backgroundColourToDisplay;
@@ -222,6 +223,7 @@ module datapath(
 				// Puts background back at starting position of square
 				backgroundAddress <= backgroundAddress + (-(320 * 31) - 31);
 				DoneDrawCar <= 1'b1;
+				DoneFixCar <= 1'b1;
 			end
 			else if(xCount == 9'd31) begin
 				xCount <= 9'd0;
@@ -230,12 +232,14 @@ module datapath(
 				// Moves on the next line of addresses for the background
 				backgroundAddress <= backgroundAddress + (320 - 31);
 				DoneDrawCar <= 1'b0;
+				DoneFixCar <= 1'b0;
 			end
 			else begin
 				xCount <= xCount + 9'd1;
 				carAddress <= carAddress + 14'd1;
 				backgroundAddress <= backgroundAddress + 17'd1;
 				DoneDrawCar <= 1'b0;
+				DoneFixCar <= 1'b0;
 			end
 			
 			//checking if the car address is not purple at a given location
